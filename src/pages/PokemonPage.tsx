@@ -1,5 +1,10 @@
 /** @format */
 
+import {
+  PokemonDetailResponse,
+  PokemonListItem,
+  PokemonListResponse,
+} from "../types/Pokemon";
 import { useEffect, useRef, useState } from "react";
 
 import { Link } from "react-router-dom";
@@ -7,25 +12,27 @@ import PokemonCard from "../components/PokemonCard";
 import axios from "axios";
 
 export default function PokemonPage() {
-  const [pokemonList, setPokemonList] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const isFetchingRef = useRef(false);
+  const [pokemonList, setPokemonList] = useState<PokemonDetailResponse[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const isFetchingRef = useRef<boolean>(false);
 
-  const fetchPokemonList = async (page) => {
+  const fetchPokemonList = async (page: number) => {
     if (isFetchingRef.current) return; // 중복 호출 방지
     isFetchingRef.current = true;
 
     const offset = (page - 1) * 20;
 
-    const response = await axios.get(
+    const response = await axios.get<PokemonListResponse>(
       `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=10`
     );
 
     const pokemonResults = response.data.results;
 
     const pokemonDetails = await Promise.all(
-      pokemonResults.map(async (pokemon) => {
-        const detailsResponse = await axios.get(pokemon.url);
+      pokemonResults.map(async (pokemon: PokemonListItem) => {
+        const detailsResponse = await axios.get<PokemonDetailResponse>(
+          pokemon.url
+        );
         return detailsResponse.data;
       })
     );
@@ -36,8 +43,6 @@ export default function PokemonPage() {
   useEffect(() => {
     fetchPokemonList(currentPage);
   }, [currentPage]);
-
-  console.log(1, pokemonList);
 
   const fetchmore = () => {
     setCurrentPage((prevPage) => prevPage + 1);
