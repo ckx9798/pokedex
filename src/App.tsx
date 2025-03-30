@@ -1,12 +1,18 @@
 /** @format */
-
 import "./App.css";
+
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import PokemonDetailPage from "./pages/PokemonDetailPage";
+import PokemonPage from "./pages/PokemonPage";
 
 export default function App() {
   return (
-    <div className="h-screen flex justify-center items-center bg-blue-50">
-      <h1 className="text-2xl font-bold text-blue-500">Tailwind 작동 성공!</h1>
-      <h1 className="text-3xl font-bold text-blue-200">Tailwind 작동 성공!</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<PokemonPage />} />
+        <Route path="/pokemon/:id" element={<PokemonDetailPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
