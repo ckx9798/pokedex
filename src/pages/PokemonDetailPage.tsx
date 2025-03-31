@@ -6,6 +6,28 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 
 export default function PokemonDetailPage() {
+  // 타입별 색상 매핑
+  const typeColors = {
+    bug: "bg-green-500",
+    dark: "bg-gray-800",
+    dragon: "bg-purple-500",
+    electric: "bg-yellow-400",
+    fairy: "bg-pink-400",
+    fighting: "bg-red-600",
+    fire: "bg-orange-500",
+    flying: "bg-blue-300",
+    ghost: "bg-indigo-500",
+    grass: "bg-green-400",
+    ground: "bg-yellow-600",
+    ice: "bg-blue-400",
+    normal: "bg-gray-400",
+    poison: "bg-purple-700",
+    psychic: "bg-pink-600",
+    rock: "bg-yellow-800",
+    steel: "bg-gray-600",
+    water: "bg-blue-500",
+  };
+
   const [pokemon, setPokemon] = useState([]);
   console.log(pokemon);
 
@@ -19,9 +41,6 @@ export default function PokemonDetailPage() {
   };
 
   useEffect(() => fetchPokemonDetailInfo, []);
-
-  const abilityName = pokemon?.abilities?.[0]?.ability?.name;
-  console.log(abilityName); // 데이터가 있으면 출력, 없으면 undefined
 
   return (
     <div className="flex flex-col lg:flex-row items-center justify-between bg-gray-100">
@@ -54,58 +73,83 @@ export default function PokemonDetailPage() {
             </span>
           </div>
 
-          <div className="flex flex-col lg:flex-row items-center justify-center bg-gray-100 px-4 my-10 py-20 rounded-2xl">
-            {/* 포켓몬 상세 카드 */}
-            <div className="bg-white shadow-lg p-6 flex flex-col lg:flex-row items-center w-full max-w-5xl border border-green-400 rounded-tl-[150px] rounded-2xl">
-              {/* 이미지 섹션 */}
-              <div className="w-full lg:w-1/2 flex justify-center items-center">
-                <img
-                  src={pokemon?.sprites?.other.dream_world.front_default}
-                  alt=""
-                  width={400}
-                />
-              </div>
+          <div className="flex">
+            <div className="flex flex-col lg:flex-row items-center justify-center bg-gray-100 px-4 my-10 py-20 rounded-2xl">
+              {/* 포켓몬 상세 카드 */}
+              <div className="bg-white shadow-lg p-6 flex flex-col lg:flex-row items-center w-full max-w-5xl border border-green-400 rounded-tl-[150px] rounded-2xl">
+                {/* 이미지 섹션 */}
+                <div className="w-full lg:w-1/2 flex justify-center items-center">
+                  <img
+                    src={pokemon?.sprites?.other.dream_world.front_default}
+                    alt=""
+                    width={400}
+                  />
+                </div>
+                {/* 상세 정보 테이블 */}
+                <table className="w-full mt-14 bg-gray-100 shadow-md rounded-2xl">
+                  <tbody>
+                    {/* 타입 */}
+                    <tr className="border-b border-gray-200">
+                      <td className="w-48 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
+                        타입
+                      </td>
+                      <td className="px-4 py-4 text-gray-600">
+                        {pokemon?.types?.map((typeObj, index) => (
+                          <span
+                            key={index}
+                            className={`inline-block px-3 py-1 text-white rounded-full text-sm mr-2 ${
+                              typeColors[typeObj.type.name] || "bg-gray-300"
+                            }`}
+                          >
+                            {typeObj.type.name}
+                          </span>
+                        ))}
+                      </td>
+                    </tr>
 
-              {/* 상세 정보 테이블 */}
-              <table className="rounded-2xl w-full bg-white shadow-md mt-10">
-                <tbody>
-                  <tr className="border-b border-gray-200">
-                    <td className="px-4 py-4 font-semibold text-gray-700 flex justify-center border-r-2 border-gray-100 border-t">
-                      키
-                    </td>
-                    <td className="px-4 py-2 text-gray-600">
-                      {pokemon.height / 10} m
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-200">
-                    <td className="px-4 py-4 font-semibold text-gray-700 flex justify-center border-r-2 border-gray-100 border-t">
-                      몸무게
-                    </td>
-                    <td className="px-4 py-2 text-gray-600 font-normal">
-                      {pokemon.weight / 10} kg
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-4 font-semibold text-gray-700 flex justify-center border-r-2 border-gray-100 border-t">
-                      능력
-                    </td>
-                    <td className="px-4 py-2 text-gray-600">
-                      {pokemon?.abilities?.map((ability, index) => (
-                        <span
-                          key={index}
-                          className={`inline-block px-3 py-1 ${
-                            ability.is_hidden
-                              ? "bg-gray-500 text-white"
-                              : "bg-blue-500 text-white"
-                          } rounded-full text-sm mr-2`}
-                        >
-                          {ability.ability.name}
-                        </span>
-                      ))}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    {/* 키 */}
+                    <tr className="border-b border-gray-200">
+                      <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
+                        키
+                      </td>
+                      <td className="px-4 py-4 text-gray-600">
+                        {pokemon.height / 10} m
+                      </td>
+                    </tr>
+
+                    {/* 몸무게 */}
+                    <tr className="border-b border-gray-200">
+                      <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
+                        몸무게
+                      </td>
+                      <td className="px-4 py-4 text-gray-600">
+                        {pokemon.weight / 10} kg
+                      </td>
+                    </tr>
+
+                    {/* 능력 */}
+                    <tr>
+                      <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
+                        능력
+                      </td>
+                      <td className="px-4 py-4 text-gray-600">
+                        {pokemon?.abilities?.map((ability, index) => (
+                          <span
+                            key={index}
+                            className={`inline-block px-3 py-1 rounded-full text-sm mr-2 ${
+                              ability.is_hidden
+                                ? "bg-gray-500 text-white"
+                                : "bg-blue-500 text-white"
+                            }`}
+                          >
+                            {ability.ability.name}
+                          </span>
+                        ))}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
