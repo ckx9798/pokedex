@@ -42,6 +42,11 @@ export default function PokemonDetailPage() {
 
   useEffect(() => fetchPokemonDetailInfo, []);
 
+  const playCry = () => {
+    const audio = new Audio(pokemon?.cries?.latest);
+    audio.play();
+  };
+
   return (
     <div className="flex flex-col lg:flex-row items-center justify-between bg-gray-100">
       {/* 왼쪽 네비게이션 */}
@@ -145,6 +150,16 @@ export default function PokemonDetailPage() {
                             {ability.ability.name}
                           </span>
                         ))}
+                      </td>
+                    </tr>
+
+                    {/* 울음소리 */}
+                    <tr className="border-t border-gray-200">
+                      <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
+                        울음소리
+                      </td>
+                      <td className="px-4 py-4 text-gray-600">
+                        <button onClick={playCry}>⚡</button>
                       </td>
                     </tr>
                   </tbody>
