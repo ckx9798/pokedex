@@ -153,7 +153,7 @@ export default function PokemonDetailPage() {
                       </td>
                     </tr>
 
-                    {/* 울음소리 */}
+                    {/* 몸무게 */}
                     <tr className="border-t border-gray-200">
                       <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
                         울음소리
@@ -166,6 +166,30 @@ export default function PokemonDetailPage() {
                 </table>
               </div>
             </div>
+            <table className="w-full mt-10 bg-white shadow-md rounded-2xl">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700 text-left">
+                  <th className="px-4 py-3 border-b">스탯 이름</th>
+                  <th className="px-4 py-3 border-b">기본 수치 (base_stat)</th>
+                  <th className="px-4 py-3 border-b">Effort</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pokemon?.stats?.map((statObj, index) => (
+                  <tr key={index} className="border-b">
+                    <td className="px-4 py-3 text-gray-700">
+                      {statObj.stat.name}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {statObj.base_stat}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {statObj.effort}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>{" "}
           </div>
         </div>
 
