@@ -44,10 +44,11 @@ export default function PokemonDetailPage() {
         {/* 텍스트 섹션 */}
         <div className="w-full lg:w-1/2 mt-6 lg:mt-0">
           <h2
-            className="text-xl font-bold"
+            className="text-xl font-bold flex flex-col"
             style={{ color: colorByType || "black" }}
           >
-            No.{pokemon.id} {pokemon.name}
+            <span>No.{pokemon.id}</span>
+            <span className="text-4xl">{pokemon.name}</span>
           </h2>
           <p className="text-gray-600 mt-2">
             햇빛을 받을수록 몸에 힘이 솟아나 등의 꽃봉오리가 커진다.
@@ -63,7 +64,7 @@ export default function PokemonDetailPage() {
             </span>
           </div>
 
-          <div className="flex w-screen bg-blue-50 items-center justify-center">
+          <div className="flex w-screen items-center justify-center bg-[url('/bg_pattern.jpg')]">
             <div className="flex flex-col lg:flex-row items-center justify-center px-4 my-10 py-20">
               {/* 포켓몬 상세 카드 */}
               <div
