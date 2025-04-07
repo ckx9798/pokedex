@@ -1,35 +1,14 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import { RadarTypeColors, typeColors } from "../types/TypeColor";
+import { useEffect, useState } from "react";
 
+import PokemonRadarChart from "../components/PokemonRadarChart";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
 export default function PokemonDetailPage() {
-  // 타입별 색상 매핑
-  const typeColors = {
-    bug: "bg-green-500",
-    dark: "bg-gray-800",
-    dragon: "bg-purple-500",
-    electric: "bg-yellow-400",
-    fairy: "bg-pink-400",
-    fighting: "bg-red-600",
-    fire: "bg-orange-500",
-    flying: "bg-blue-300",
-    ghost: "bg-indigo-500",
-    grass: "bg-green-400",
-    ground: "bg-yellow-600",
-    ice: "bg-blue-400",
-    normal: "bg-gray-400",
-    poison: "bg-purple-700",
-    psychic: "bg-pink-600",
-    rock: "bg-yellow-800",
-    steel: "bg-gray-600",
-    water: "bg-blue-500",
-  };
-
   const [pokemon, setPokemon] = useState([]);
-  console.log(pokemon);
 
   const param = useParams();
 
@@ -47,6 +26,9 @@ export default function PokemonDetailPage() {
     audio.play();
   };
 
+  const type = pokemon.types?.[0].type.name;
+  const colorByType = RadarTypeColors[type];
+
   return (
     <div className="flex flex-col lg:flex-row items-center justify-between bg-gray-100">
       {/* 왼쪽 네비게이션 */}
@@ -61,7 +43,10 @@ export default function PokemonDetailPage() {
       <div className="flex flex-col lg:flex-row items-center justify-center w-full lg:w-3/5 bg-white shadow-lg rounded-lg p-6">
         {/* 텍스트 섹션 */}
         <div className="w-full lg:w-1/2 mt-6 lg:mt-0">
-          <h2 className="text-xl font-bold">
+          <h2
+            className="text-xl font-bold"
+            style={{ color: colorByType || "black" }}
+          >
             No.{pokemon.id} {pokemon.name}
           </h2>
           <p className="text-gray-600 mt-2">
@@ -78,20 +63,47 @@ export default function PokemonDetailPage() {
             </span>
           </div>
 
-          <div className="flex">
-            <div className="flex flex-col lg:flex-row items-center justify-center bg-gray-100 px-4 my-10 py-20 rounded-2xl">
+          <div className="flex w-screen bg-blue-50 items-center justify-center">
+            <div className="flex flex-col lg:flex-row items-center justify-center px-4 my-10 py-20">
               {/* 포켓몬 상세 카드 */}
-              <div className="bg-white shadow-lg p-6 flex flex-col lg:flex-row items-center w-full max-w-5xl border border-green-400 rounded-tl-[150px] rounded-2xl">
+              <div
+                className={
+                  "bg-white shadow-lg p-6 flex flex-col lg:flex-row items-center w-full max-w-5xl border rounded-tl-[150px] rounded-2xl"
+                }
+                style={{ borderColor: colorByType }}
+              >
                 {/* 이미지 섹션 */}
-                <div className="w-full lg:w-1/2 flex justify-center items-center">
+                <div className="w-full lg:w-1/2 flex flex-col justify-center items-center">
                   <img
-                    src={pokemon?.sprites?.other.dream_world.front_default}
+                    src={
+                      pokemon?.sprites?.other["official-artwork"].front_default
+                    }
                     alt=""
                     width={400}
                   />
+
+                  <div className="flex gap-10 my-10">
+                    <img
+                      src={pokemon?.sprites?.other.showdown.front_default}
+                      alt=""
+                      width={100}
+                    />
+                    <img
+                      src={pokemon?.sprites?.other.showdown.back_default}
+                      alt=""
+                      width={100}
+                    />
+                  </div>
                 </div>
-                {/* 상세 정보 테이블 */}
-                <table className="w-full mt-14 bg-gray-100 shadow-md rounded-2xl">
+              </div>
+            </div>
+            <div className="p-6">
+              {/* 상세 정보 테이블 */}
+              <div
+                className="rounded-2xl overflow-hidden shadow-md border mx-3"
+                style={{ borderColor: colorByType }}
+              >
+                <table className="bg-white border-collapse w-full">
                   <tbody>
                     {/* 타입 */}
                     <tr className="border-b border-gray-200">
@@ -165,8 +177,14 @@ export default function PokemonDetailPage() {
                   </tbody>
                 </table>
               </div>
+              <div
+                className="bg-white rounded-2xl m-3 border"
+                style={{ borderColor: colorByType }}
+              >
+                <PokemonRadarChart pokemon={pokemon} />
+              </div>
             </div>
-            <table className="w-full mt-10 bg-white shadow-md rounded-2xl">
+            {/* <table className="w-full mt-10 bg-white shadow-md rounded-2xl">
               <thead>
                 <tr className="bg-gray-100 text-gray-700 text-left">
                   <th className="px-4 py-3 border-b">스탯 이름</th>
@@ -189,7 +207,7 @@ export default function PokemonDetailPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>{" "}
+            </table>{" "} */}
           </div>
         </div>
 
