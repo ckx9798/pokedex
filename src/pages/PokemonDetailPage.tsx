@@ -3,28 +3,46 @@
 import { RadarTypeColors, typeColors } from "../types/TypeColor";
 import { useEffect, useState } from "react";
 
+import PokemonImage from "../components/PokemonImage";
+import PokemonInfo from "../components/PokemonInfo";
 import PokemonRadarChart from "../components/PokemonRadarChart";
+import PokemonRevolution from "../components/PokemonRevolution";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
 export default function PokemonDetailPage() {
   const [pokemon, setPokemon] = useState([]);
+  const [description, setDescription] = useState("");
 
   const param = useParams();
 
   const fetchPokemonDetailInfo = async () => {
-    const response = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon/${param.id}`
-    );
-    setPokemon(response.data);
+    try {
+      // 1. 포켓몬 기본 정보 요청
+      const response = await axios.get(
+        `https://pokeapi.co/api/v2/pokemon/${param.id}`
+      );
+      const pokemonData = response.data;
+      setPokemon(pokemonData);
+
+      // 2. species 요청 (설명 포함)
+      const speciesResponse = await axios.get(pokemonData.species.url);
+      const speciesData = speciesResponse.data;
+
+      // 3. 한국어 설명 찾기
+      const flavor = speciesData.flavor_text_entries.find(
+        (entry) => entry.language.name === "ko"
+      );
+
+      setDescription(flavor?.flavor_text.replace(/\f/g, " ") || "");
+    } catch (error) {
+      console.error("포켓몬 정보 가져오기 실패:", error);
+    }
   };
 
-  useEffect(() => fetchPokemonDetailInfo, []);
-
-  const playCry = () => {
-    const audio = new Audio(pokemon?.cries?.latest);
-    audio.play();
-  };
+  useEffect(() => {
+    fetchPokemonDetailInfo();
+  }, [param.id]);
 
   const type = pokemon.types?.[0].type.name;
   const colorByType = RadarTypeColors[type];
@@ -40,175 +58,46 @@ export default function PokemonDetailPage() {
       </div>
 
       {/* 포켓몬 상세 정보 카드 */}
-      <div className="flex flex-col lg:flex-row items-center justify-center w-full lg:w-3/5 bg-white shadow-lg rounded-lg p-6">
+      <div className="flex flex-col lg:flex-row items-center justify-center w-full lg:w-3/5 bg-white shadow-lg rounded-lg">
         {/* 텍스트 섹션 */}
         <div className="w-full lg:w-1/2 mt-6 lg:mt-0">
-          <h2
-            className="text-xl font-bold flex flex-col"
-            style={{ color: colorByType || "black" }}
-          >
-            <span>No.{pokemon.id}</span>
-            <span className="text-4xl">{pokemon.name}</span>
-          </h2>
-          <p className="text-gray-600 mt-2">
-            햇빛을 받을수록 몸에 힘이 솟아나 등의 꽃봉오리가 커진다.
-          </p>
-
+          <div className="p-6 bg-white rounded-2xl shadow-md">
+            <h2 className="flex flex-col items-start gap-1">
+              <span
+                className="text-2xl font-semibold text-gray-400"
+                style={{ color: colorByType }}
+              >
+                No. {pokemon.id}
+              </span>
+              <span
+                className="text-5xl font-bold capitalize tracking-wide"
+                style={{ color: colorByType }}
+              >
+                {pokemon.name}
+              </span>
+            </h2>
+            <p className="text-gray-700 mt-4 leading-relaxed text-base">
+              {description}
+            </p>
+          </div>
           {/* 태그 섹션 */}
-          <div className="flex gap-2 mt-4">
+          {/* <div className="flex gap-2 mt-4">
             <span className="px-3 py-1 bg-red-500 text-white rounded-full text-sm">
               스칼렛
             </span>
             <span className="px-3 py-1 bg-gray-300 text-gray-800 rounded-full text-sm">
               바이올렛
             </span>
-          </div>
-
-          <div className="flex w-screen items-center justify-center bg-[url('/bg_pattern.jpg')]">
-            <div className="flex flex-col lg:flex-row items-center justify-center px-4 my-10 py-20">
-              {/* 포켓몬 상세 카드 */}
-              <div
-                className={
-                  "bg-white shadow-lg p-6 flex flex-col lg:flex-row items-center w-full max-w-5xl border rounded-tl-[150px] rounded-2xl"
-                }
-                style={{ borderColor: colorByType }}
-              >
-                {/* 이미지 섹션 */}
-                <div className="w-full lg:w-1/2 flex flex-col justify-center items-center">
-                  <img
-                    src={
-                      pokemon?.sprites?.other["official-artwork"].front_default
-                    }
-                    alt=""
-                    width={400}
-                  />
-
-                  <div className="flex gap-10 my-10">
-                    <img
-                      src={pokemon?.sprites?.other.showdown.front_default}
-                      alt=""
-                      width={100}
-                    />
-                    <img
-                      src={pokemon?.sprites?.other.showdown.back_default}
-                      alt=""
-                      width={100}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="p-6">
-              {/* 상세 정보 테이블 */}
-              <div
-                className="rounded-2xl overflow-hidden shadow-md border mx-3"
-                style={{ borderColor: colorByType }}
-              >
-                <table className="bg-white border-collapse w-full">
-                  <tbody>
-                    {/* 타입 */}
-                    <tr className="border-b border-gray-200">
-                      <td className="w-48 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
-                        타입
-                      </td>
-                      <td className="px-4 py-4 text-gray-600">
-                        {pokemon?.types?.map((typeObj, index) => (
-                          <span
-                            key={index}
-                            className={`inline-block px-3 py-1 text-white rounded-full text-sm mr-2 ${
-                              typeColors[typeObj.type.name] || "bg-gray-300"
-                            }`}
-                          >
-                            {typeObj.type.name}
-                          </span>
-                        ))}
-                      </td>
-                    </tr>
-
-                    {/* 키 */}
-                    <tr className="border-b border-gray-200">
-                      <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
-                        키
-                      </td>
-                      <td className="px-4 py-4 text-gray-600">
-                        {pokemon.height / 10} m
-                      </td>
-                    </tr>
-
-                    {/* 몸무게 */}
-                    <tr className="border-b border-gray-200">
-                      <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
-                        몸무게
-                      </td>
-                      <td className="px-4 py-4 text-gray-600">
-                        {pokemon.weight / 10} kg
-                      </td>
-                    </tr>
-
-                    {/* 능력 */}
-                    <tr>
-                      <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
-                        능력
-                      </td>
-                      <td className="px-4 py-4 text-gray-600">
-                        {pokemon?.abilities?.map((ability, index) => (
-                          <span
-                            key={index}
-                            className={`inline-block px-3 py-1 rounded-full text-sm mr-2 ${
-                              ability.is_hidden
-                                ? "bg-gray-500 text-white"
-                                : "bg-blue-500 text-white"
-                            }`}
-                          >
-                            {ability.ability.name}
-                          </span>
-                        ))}
-                      </td>
-                    </tr>
-
-                    {/* 몸무게 */}
-                    <tr className="border-t border-gray-200">
-                      <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
-                        울음소리
-                      </td>
-                      <td className="px-4 py-4 text-gray-600">
-                        <button onClick={playCry}>⚡</button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div
-                className="bg-white rounded-2xl m-3 border"
-                style={{ borderColor: colorByType }}
-              >
+          </div> */}
+          <div className="w-screen bg-[url('/bg_pattern.jpg')] flex justify-center items-center flex-col py-10">
+            <div className="flex items-center justify-center w-[1200px] bg-white rounded-4xl">
+              <PokemonImage pokemon={pokemon} />
+              <div>
+                <PokemonInfo pokemon={pokemon} />
                 <PokemonRadarChart pokemon={pokemon} />
               </div>
             </div>
-            {/* <table className="w-full mt-10 bg-white shadow-md rounded-2xl">
-              <thead>
-                <tr className="bg-gray-100 text-gray-700 text-left">
-                  <th className="px-4 py-3 border-b">스탯 이름</th>
-                  <th className="px-4 py-3 border-b">기본 수치 (base_stat)</th>
-                  <th className="px-4 py-3 border-b">Effort</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pokemon?.stats?.map((statObj, index) => (
-                  <tr key={index} className="border-b">
-                    <td className="px-4 py-3 text-gray-700">
-                      {statObj.stat.name}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {statObj.base_stat}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {statObj.effort}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>{" "} */}
+            <PokemonRevolution pokemon={pokemon} />
           </div>
         </div>
 
