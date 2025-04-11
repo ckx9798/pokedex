@@ -1,92 +1,85 @@
 /** @format */
 
-import { RadarTypeColors, typeColors } from "../types/TypeColor";
+import { typeColors } from "../types/TypeColor";
 
-export default function PokemonInfo({ pokemon }) {
+export default function PokemonInfo({ pokemon, colorByType }) {
   const playCry = () => {
     const audio = new Audio(pokemon?.cries?.latest);
     audio.play();
   };
 
-  const type = pokemon.types?.[0].type.name;
-  const colorByType = RadarTypeColors[type];
+  // 정보 배열로 구성
+  const infoItems = [
+    {
+      label: "타입",
+      content: (
+        <div className="flex flex-wrap gap-2">
+          {pokemon?.types?.map((typeObj, index) => (
+            <span
+              key={index}
+              className={`inline-block px-3 py-1 text-white rounded-full text-sm ${
+                typeColors[typeObj.type.name] || "bg-gray-300"
+              }`}
+            >
+              {typeObj.type.name}
+            </span>
+          ))}
+        </div>
+      ),
+    },
+    {
+      label: "키",
+      content: `${pokemon.height / 10} m`,
+    },
+    {
+      label: "몸무게",
+      content: `${pokemon.weight / 10} kg`,
+    },
+    {
+      label: "능력",
+      content: (
+        <div className="flex flex-wrap gap-2">
+          {pokemon?.abilities?.map((ability, index) => (
+            <span
+              key={index}
+              className={`inline-block px-3 py-1 rounded-full text-sm ${
+                ability.is_hidden
+                  ? "bg-gray-500 text-white"
+                  : "bg-blue-500 text-white"
+              }`}
+            >
+              {ability.ability.name}
+            </span>
+          ))}
+        </div>
+      ),
+    },
+    {
+      label: "울음소리",
+      content: (
+        <button onClick={playCry} className="text-xl">
+          ⚡
+        </button>
+      ),
+    },
+  ];
 
   return (
     <div
-      className="rounded-2xl overflow-hidden shadow-md border mx-3"
+      className="rounded-2xl overflow-hidden shadow-md border p-6 space-y-4 bg-white"
       style={{ borderColor: colorByType }}
     >
-      <table className="bg-white border-collapse w-full">
-        <tbody>
-          {/* 타입 */}
-          <tr className="border-b border-gray-200">
-            <td className="w-48 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
-              타입
-            </td>
-            <td className="px-4 py-4 text-gray-600">
-              {pokemon?.types?.map((typeObj, index) => (
-                <span
-                  key={index}
-                  className={`inline-block px-3 py-1 text-white rounded-full text-sm mr-2 ${
-                    typeColors[typeObj.type.name] || "bg-gray-300"
-                  }`}
-                >
-                  {typeObj.type.name}
-                </span>
-              ))}
-            </td>
-          </tr>
-
-          {/* 키 */}
-          <tr className="border-b border-gray-200">
-            <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
-              키
-            </td>
-            <td className="px-4 py-4 text-gray-600">{pokemon.height / 10} m</td>
-          </tr>
-
-          {/* 몸무게 */}
-          <tr className="border-b border-gray-200">
-            <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
-              몸무게
-            </td>
-            <td className="px-4 py-4 text-gray-600">
-              {pokemon.weight / 10} kg
-            </td>
-          </tr>
-
-          {/* 능력 */}
-          <tr>
-            <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
-              능력
-            </td>
-            <td className="px-4 py-4 text-gray-600">
-              {pokemon?.abilities?.map((ability, index) => (
-                <span
-                  key={index}
-                  className={`inline-block px-3 py-1 rounded-full text-sm mr-2 ${
-                    ability.is_hidden
-                      ? "bg-gray-500 text-white"
-                      : "bg-blue-500 text-white"
-                  }`}
-                >
-                  {ability.ability.name}
-                </span>
-              ))}
-            </td>
-          </tr>
-
-          {/* 몸무게 */}
-          <tr className="border-t border-gray-200">
-            <td className="w-24 px-4 py-4 font-semibold text-gray-700 text-center border-r border-gray-200">
-              울음소리
-            </td>
-            <td className="px-4 py-4 text-gray-600">
-              <button onClick={playCry}>⚡</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      {infoItems.map((item, index) => (
+        <div
+          key={index}
+          className="flex items-start gap-4 rounded-xl p-4 shadow-sm border border-gray-200"
+        >
+          <div className="w-24 font-bold text-gray-700 text-center">
+            {item.label}
+          </div>
+          <div className="flex-1 text-gray-800 ml-2">{item.content}</div>
+        </div>
+      ))}
     </div>
   );
 }
