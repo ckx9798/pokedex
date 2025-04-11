@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import MoveByRevolution from "./MoveByRevolution";
 import axios from "axios";
 
-export default function PokemonRevolution({ pokemon }) {
+export default function PokemonRevolution({ pokemon, colorByType }) {
   const [evolutionList, setEvolutionList] = useState([]);
 
   useEffect(() => {
@@ -42,11 +42,18 @@ export default function PokemonRevolution({ pokemon }) {
 
   return (
     <div className="my-10 flex flex-col items-center">
-      <h2 className="text-2xl font-bold mb-4">Revolution Chain</h2>
-      <div className="flex gap-20 items-center bg-white px-20 py-10 rounded-3xl">
-        {evolutionList.map((name) => (
-          <MoveByRevolution name={name} />
-        ))}
+      <div
+        className="flex flex-col gap-10 items-center bg-white py-10 rounded-3xl border-2"
+        style={{ borderColor: colorByType }}
+      >
+        <h2 className="text-2xl font-bold mb-4 text-gray-500">
+          Revolution Chain
+        </h2>
+        <div className="flex gap-30 w-[1200px] justify-center">
+          {evolutionList.map((name) => (
+            <MoveByRevolution name={name} />
+          ))}
+        </div>
       </div>
     </div>
   );
