@@ -1,12 +1,16 @@
 /** @format */
 
-import { RadarTypeColors, typeColors } from "../types/TypeColor";
 import { useEffect, useState } from "react";
 
+import MoveToHome from "../components/MoveToHome";
+import MoveToNextPokemon from "../components/MoveToNextPokemon";
+import MoveToPrevPokemon from "../components/MoveToPrevPokemon";
 import PokemonImage from "../components/PokemonImage";
 import PokemonInfo from "../components/PokemonInfo";
+import PokemonName from "../components/PokemonName";
 import PokemonRadarChart from "../components/PokemonRadarChart";
 import PokemonRevolution from "../components/PokemonRevolution";
+import { RadarTypeColors } from "../types/TypeColor";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
@@ -50,70 +54,41 @@ export default function PokemonDetailPage() {
   return (
     <div className="flex flex-col lg:flex-row items-center justify-between bg-gray-100">
       {/* 왼쪽 네비게이션 */}
-      <div className="flex items-center justify-between w-full lg:w-1/5 p-4 bg-gray-800 text-white">
-        <button className="flex items-center gap-2 text-sm">
-          <span className="material-icons">arrow_back</span>
-          No.0001 이상해씨
-        </button>
-      </div>
+      <MoveToPrevPokemon pokemon={pokemon} />
 
       {/* 포켓몬 상세 정보 카드 */}
       <div className="flex flex-col lg:flex-row items-center justify-center w-full lg:w-3/5 bg-white shadow-lg rounded-lg">
         {/* 텍스트 섹션 */}
         <div className="w-full lg:w-1/2 mt-6 lg:mt-0">
-          <div className="p-6 bg-white rounded-2xl shadow-md">
-            <h2 className="flex flex-col items-start gap-1">
-              <span
-                className="text-2xl font-semibold text-gray-400"
-                style={{ color: colorByType }}
-              >
-                No. {pokemon.id}
-              </span>
-              <span
-                className="text-5xl font-bold capitalize tracking-wide"
-                style={{ color: colorByType }}
-              >
-                {pokemon.name}
-              </span>
-            </h2>
-            <p className="text-gray-700 mt-4 leading-relaxed text-base">
-              {description}
-            </p>
-          </div>
-          {/* 태그 섹션 */}
-          {/* <div className="flex gap-2 mt-4">
-            <span className="px-3 py-1 bg-red-500 text-white rounded-full text-sm">
-              스칼렛
-            </span>
-            <span className="px-3 py-1 bg-gray-300 text-gray-800 rounded-full text-sm">
-              바이올렛
-            </span>
-          </div> */}
           <div className="w-screen bg-[url('/bg_pattern.jpg')] flex justify-center items-center flex-col py-10">
-            <div className="flex items-center justify-center w-[1200px] bg-white rounded-4xl">
-              <PokemonImage pokemon={pokemon} />
-              <div>
-                <PokemonInfo pokemon={pokemon} />
-                <PokemonRadarChart pokemon={pokemon} />
+            <div
+              className="flex items-center justify-center w-[1200px] bg-white rounded-4xl border-2 pt-14 pb-20"
+              style={{ borderColor: colorByType }}
+            >
+              <div className="flex flex-col gap-10 w-full">
+                <PokemonName pokemon={pokemon} description={description} />
+                <div className="flex justify-center gap-10">
+                  <PokemonImage pokemon={pokemon} />
+                  <div className="flex flex-col justify-between gap-4">
+                    <PokemonInfo pokemon={pokemon} colorByType={colorByType} />
+                    <PokemonRadarChart
+                      pokemon={pokemon}
+                      colorByType={colorByType}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-            <PokemonRevolution pokemon={pokemon} />
+            <PokemonRevolution pokemon={pokemon} colorByType={colorByType} />
           </div>
         </div>
 
         {/* 버튼 섹션 */}
-        <button className="mt-6 w-full bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600 transition duration-200">
-          이상해풀 상품 보러가기
-        </button>
+        <MoveToHome />
       </div>
 
       {/* 오른쪽 네비게이션 */}
-      <div className="flex items-center justify-between w-full lg:w-1/5 p-4 bg-gray-800 text-white">
-        <button className="flex items-center gap-2 text-sm ml-auto">
-          No.0003 이상해꽃
-          <span className="material-icons">arrow_forward</span>
-        </button>
-      </div>
+      <MoveToNextPokemon pokemon={pokemon} />
     </div>
   );
 }
