@@ -12,7 +12,7 @@ export default function MoveByRevolution({ name }) {
   return (
     <div
       key={name}
-      className="flex flex-col items-center"
+      className="flex flex-col items-center cursor-pointer"
       onClick={() => navigateByRebolution(name)}
     >
       <img
